@@ -1,9 +1,9 @@
-import { View, type ViewProps } from "react-native";
+import { View, type ViewProps, type DimensionValue } from "react-native";
 import { cn } from "@/lib/utils";
 
 type SkeletonProps = ViewProps & {
-  width?: number | string;
-  height?: number | string;
+  width?: DimensionValue;
+  height?: DimensionValue;
   rounded?: boolean;
 };
 

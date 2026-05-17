@@ -1,0 +1,16 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0012",
+  "title": "Shared UI components: Banner + Skeleton + RemoteImage wrapper",
+  "files": [
+    "src/components/ui/Banner.tsx",
+    "src/components/ui/Skeleton.tsx",
+    "src/components/ui/RemoteImage.tsx"
+  ],
+  "dependsOn": [
+    "0001"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.808Z",
+  "status": "kit_ready"
+}

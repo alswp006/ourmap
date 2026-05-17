@@ -1,0 +1,18 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0014",
+  "title": "Screen: Place Map tab (pins + summary + refresh + 401 handling)",
+  "files": [
+    "app/(tabs)/map.tsx"
+  ],
+  "dependsOn": [
+    "0003",
+    "0005",
+    "0007",
+    "0008",
+    "0012"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.973Z",
+  "status": "kit_ready"
+}

@@ -1,0 +1,19 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0013",
+  "title": "Screen: Place List tab (search, pagination, swipe-to-delete, dev timing)",
+  "files": [
+    "app/(tabs)/places.tsx"
+  ],
+  "dependsOn": [
+    "0003",
+    "0005",
+    "0007",
+    "0008",
+    "0006",
+    "0012"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.890Z",
+  "status": "kit_ready"
+}

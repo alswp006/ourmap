@@ -1,0 +1,20 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0020",
+  "title": "Final wiring + polish (routes, tab labels, cross-links)",
+  "files": [
+    "app/(tabs)/_layout.tsx",
+    "app/(tabs)/index.tsx"
+  ],
+  "dependsOn": [
+    "0013",
+    "0014",
+    "0016",
+    "0017",
+    "0018",
+    "0019"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:17.484Z",
+  "status": "kit_ready"
+}

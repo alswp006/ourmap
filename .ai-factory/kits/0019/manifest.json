@@ -1,0 +1,17 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0019",
+  "title": "Screen: Trip Detail (view + update coverPhotoUrl + delete)",
+  "files": [
+    "app/trips/[id].tsx"
+  ],
+  "dependsOn": [
+    "0004",
+    "0007",
+    "0009",
+    "0012"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:17.402Z",
+  "status": "kit_ready"
+}

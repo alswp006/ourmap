@@ -1,0 +1,14 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0021",
+  "title": "라우팅 와이어링 + Provider 연결 + 통합 폴리시",
+  "files": [
+    "src/App.tsx"
+  ],
+  "dependsOn": [
+    "0020"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:17.568Z",
+  "status": "kit_ready"
+}

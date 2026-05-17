@@ -1,0 +1,17 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0018",
+  "title": "Screen: Trip List tab (pagination + create/edit modal form)",
+  "files": [
+    "app/(tabs)/trips.tsx"
+  ],
+  "dependsOn": [
+    "0004",
+    "0007",
+    "0009",
+    "0012"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:17.320Z",
+  "status": "kit_ready"
+}

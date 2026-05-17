@@ -1,0 +1,16 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0006",
+  "title": "PRD QA docs + privacy guardrails doc + dev stopwatch helper",
+  "files": [
+    "docs/prd-goals-qa.md",
+    "docs/privacy-guardrails.md",
+    "src/lib/perf/stopwatch.ts"
+  ],
+  "dependsOn": [
+    "0001"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.312Z",
+  "status": "kit_ready"
+}

@@ -1,0 +1,16 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0002",
+  "title": "Entity + contract + UI-only types (Places/Trips/Photos/Geocode)",
+  "files": [
+    "src/lib/types/entities.ts",
+    "src/lib/types/contracts.ts",
+    "src/lib/types/ui.ts"
+  ],
+  "dependsOn": [
+    "0001"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:15.981Z",
+  "status": "kit_ready"
+}

@@ -1,0 +1,17 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0017",
+  "title": "Screen: Place Detail (view + inline edit toggle + delete)",
+  "files": [
+    "app/places/[id].tsx"
+  ],
+  "dependsOn": [
+    "0003",
+    "0007",
+    "0008",
+    "0012"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:17.237Z",
+  "status": "kit_ready"
+}

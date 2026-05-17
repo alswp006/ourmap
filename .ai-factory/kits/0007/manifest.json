@@ -1,0 +1,14 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0007",
+  "title": "API error utilities (network vs server) + status extractor",
+  "files": [
+    "src/lib/api/errors.ts"
+  ],
+  "dependsOn": [
+    "0001"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.396Z",
+  "status": "kit_ready"
+}

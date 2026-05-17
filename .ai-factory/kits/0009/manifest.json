@@ -1,0 +1,15 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0009",
+  "title": "Trips API module (list/create/get/update/delete)",
+  "files": [
+    "src/lib/api/trips.ts"
+  ],
+  "dependsOn": [
+    "0002",
+    "0007"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.560Z",
+  "status": "kit_ready"
+}

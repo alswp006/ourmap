@@ -1,0 +1,12 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0001",
+  "title": "API primitive types (errors + pagination)",
+  "files": [
+    "src/lib/types/api.ts"
+  ],
+  "dependsOn": [],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:15.846Z",
+  "status": "kit_ready"
+}

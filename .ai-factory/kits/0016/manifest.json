@@ -1,0 +1,19 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0016",
+  "title": "Screen: Place Create (photo pick, 10MB validation, upload, geocode, dev timer)",
+  "files": [
+    "app/places/new.tsx"
+  ],
+  "dependsOn": [
+    "0006",
+    "0007",
+    "0008",
+    "0010",
+    "0011",
+    "0012"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:17.157Z",
+  "status": "kit_ready"
+}

@@ -1,0 +1,14 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0003",
+  "title": "Places Zustand store (in-memory list + details cache)",
+  "files": [
+    "src/store/placesStore.ts"
+  ],
+  "dependsOn": [
+    "0002"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.065Z",
+  "status": "kit_ready"
+}

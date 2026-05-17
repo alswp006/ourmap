@@ -1,0 +1,16 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0010",
+  "title": "Photos upload API (multipart) + EXIF/asset metadata extractor",
+  "files": [
+    "src/lib/api/photos.ts",
+    "src/lib/photos/extractMetadata.ts"
+  ],
+  "dependsOn": [
+    "0002",
+    "0007"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.644Z",
+  "status": "kit_ready"
+}

@@ -1,0 +1,14 @@
+{
+  "projectId": "proj-ourmap",
+  "packetId": "0005",
+  "title": "Repository helpers (pure): sort + merge pagination",
+  "files": [
+    "src/lib/repos/listHelpers.ts"
+  ],
+  "dependsOn": [
+    "0002"
+  ],
+  "platform": "mobile",
+  "createdAt": "2026-05-17T18:36:16.229Z",
+  "status": "kit_ready"
+}

@@ -1,0 +1,727 @@
+[
+  {
+    "id": "0001",
+    "title": "API primitive types (errors + pagination)",
+    "epic": "Epic 1 (Data/Store)",
+    "task": {
+      "description": "Define shared API primitive types used across all endpoint wrappers: standardized error payload and the generic pagination response. Keep the file type-only to avoid runtime bundling and ensure strict TS compatibility across the app.",
+      "acceptance_criteria": [
+        "File src/lib/types/api.ts exports ApiErrorResponse { error: string } matching SPEC exactly",
+        "File src/lib/types/api.ts exports PaginatedResponse<T> with fields items, total, page (number) matching SPEC exactly",
+        "src/lib/types/api.ts contains only type/interface exports (no functions, constants, or runtime code)"
+      ]
+    },
+    "covers": [
+      "F1-AC-3",
+      "F4-AC-5",
+      "AC-PL-3"
+    ],
+    "files": [
+      "src/lib/types/api.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes",
+      "No runtime code added in types file"
+    ],
+    "depends_on": [],
+    "db_schema": "export interface ApiErrorResponse { error: string }\nexport interface PaginatedResponse<T> { items: T[]; total: number; page: number }",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0002",
+    "title": "Entity + contract + UI-only types (Places/Trips/Photos/Geocode)",
+    "epic": "Epic 1 (Data/Store)",
+    "task": {
+      "description": "Add SPEC-aligned entity models and all request/response contracts for Places/Trips/Photos/Reverse Geocode plus local UI state types for photo selection and EXIF metadata extraction results. All files must remain type-only to prevent runtime side effects.",
+      "acceptance_criteria": [
+        "src/lib/types/entities.ts exports PlaceCategory, Place, PlaceDetail, Photo, Trip, ReverseGeocodeResult (type-only)",
+        "src/lib/types/contracts.ts exports all request/response types named in SPEC (GetPlacesResponse, CreatePlaceRequest, UpdatePlaceRequest, GetTripsResponse, CreateTripRequest, UpdateTripRequest, CreatePhotoResponse, ReverseGeocodeRequest, ReverseGeocodeResponse)",
+        "src/lib/types/ui.ts exports PhotoUploadStatus, SelectedLocalPhoto, SelectedPhotoItem, ExtractedPhotoMetadata and contains no runtime code"
+      ]
+    },
+    "covers": [
+      "F1-AC-1",
+      "F1-AC-2",
+      "F2-AC-6",
+      "F3-AC-1"
+    ],
+    "files": [
+      "src/lib/types/entities.ts",
+      "src/lib/types/contracts.ts",
+      "src/lib/types/ui.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes",
+      "No runtime code in any src/lib/types/*.ts file"
+    ],
+    "depends_on": [
+      "0001"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0003",
+    "title": "Places Zustand store (in-memory list + details cache)",
+    "epic": "Epic 1 (Data/Store)",
+    "task": {
+      "description": "Create a focused Places store to cache paginated list items and place details in memory. Provide actions to set/append pages, upsert a detail response, and remove an item after deletion so screens can update instantly without refetching.",
+      "acceptance_criteria": [
+        "File src/store/placesStore.ts exports usePlacesStore hook with state: items: Place[], total: number | null, page: number, detailsById: Record<string, PlaceDetail>",
+        "Store exposes actions setFirstPage(items,total,page), appendPage(items,total,page), upsertDetail(detail) and removePlace(id) that update state deterministically",
+        "Importing the store in a blank component compiles under TypeScript strict (no implicit any)"
+      ]
+    },
+    "covers": [
+      "F1-AC-7",
+      "F4-AC-1",
+      "F4-AC-6"
+    ],
+    "files": [
+      "src/store/placesStore.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes",
+      "No screen files changed"
+    ],
+    "depends_on": [
+      "0002"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0004",
+    "title": "Trips Zustand store (in-memory cache)",
+    "epic": "Epic 1 (Data/Store)",
+    "task": {
+      "description": "Create a Trips store to cache paginated trips list and trip objects by id. Include actions to set/append pages, upsert a trip from create/update, and remove a trip locally after deletion so the UI can reflect changes immediately.",
+      "acceptance_criteria": [
+        "File src/store/tripsStore.ts exports useTripsStore with state: items: Trip[], total: number | null, page: number, byId: Record<string, Trip>",
+        "Actions setFirstPage, appendPage, upsertTrip, removeTrip update state without mutating existing arrays/objects in place",
+        "TypeScript strict build passes with no ts-ignore or any casting"
+      ]
+    },
+    "covers": [
+      "AC-TL-1",
+      "AC-TL-2",
+      "AC-TD-1"
+    ],
+    "files": [
+      "src/store/tripsStore.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0002"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0005",
+    "title": "Repository helpers (pure): sort + merge pagination",
+    "epic": "Epic 1 (Data/Store)",
+    "task": {
+      "description": "Add small pure helper functions for client-side list handling: stable sort places by visitedAt desc and merge paginated results without duplicates (by id). These helpers are reused by list/map screens to meet 1,000ms render budget.",
+      "acceptance_criteria": [
+        "src/lib/repos/listHelpers.ts exports sortPlacesByVisitedAtDesc(places) returning new array ordered by visitedAt descending (string compare by Date.parse)",
+        "src/lib/repos/listHelpers.ts exports mergeById(existing,next) returning a new array with unique ids preserving existing order then appending new unique items",
+        "Helpers have no runtime side effects and include explicit input/output typings (no implicit any)"
+      ]
+    },
+    "covers": [
+      "F4-AC-3",
+      "F4-AC-6",
+      "F5-AC-1"
+    ],
+    "files": [
+      "src/lib/repos/listHelpers.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes",
+      "No screen files changed"
+    ],
+    "depends_on": [
+      "0002"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0006",
+    "title": "PRD QA docs + privacy guardrails doc + dev stopwatch helper",
+    "epic": "Epic 4 (Integration)",
+    "task": {
+      "description": "Add lightweight manual QA docs for PRD time goals and privacy boundaries, plus a dev-only stopwatch helper used by screens for timing overlays. Stopwatch must be side-effect free and safe for production builds (used only under __DEV__).",
+      "acceptance_criteria": [
+        "docs/prd-goals-qa.md exists with headings '## 30-second place creation check' and '## 1-second lookup check' and mentions overlay strings 'Create elapsed' and 'Search compute'",
+        "docs/privacy-guardrails.md exists and contains checklist bullets: '- No public/share links in UI', '- No export (CSV/JSON) in UI', '- All API calls require auth token'",
+        "src/lib/perf/stopwatch.ts exports startStopwatch(): { elapsedMs: () => number } and contains no React code and creates no timers"
+      ]
+    },
+    "covers": [
+      "Task-0.1",
+      "Task-0.2",
+      "Task-0.3"
+    ],
+    "files": [
+      "docs/prd-goals-qa.md",
+      "docs/privacy-guardrails.md",
+      "src/lib/perf/stopwatch.ts"
+    ],
+    "definition_of_done": [
+      "Docs render in repo",
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0001"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0007",
+    "title": "API error utilities (network vs server) + status extractor",
+    "epic": "Epic 2 (API)",
+    "task": {
+      "description": "Implement centralized API error helpers so screens can reliably render network error states and branch on HTTP status (401/404/429) without ad-hoc parsing. Include a status extractor that checks both e.status and e.response.status.",
+      "acceptance_criteria": [
+        "src/lib/api/errors.ts exports isNetworkError(e): boolean and returns true for fetch/network-like errors with no HTTP status",
+        "src/lib/api/errors.ts exports getApiErrorMessage(e): string | null and returns the '{ error: string }' value when present, else null",
+        "src/lib/api/errors.ts exports getApiStatus(e): number | null and returns 401 when provided an object with status=401 at e.status OR e.response.status"
+      ]
+    },
+    "covers": [
+      "F1-AC-6",
+      "F3-AC-3",
+      "AC-PL-3"
+    ],
+    "files": [
+      "src/lib/api/errors.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes",
+      "No screens changed"
+    ],
+    "depends_on": [
+      "0001"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0008",
+    "title": "Places API module (list/detail/create/update/delete)",
+    "epic": "Epic 2 (API)",
+    "task": {
+      "description": "Add Places API wrappers for all CRUD endpoints plus paginated list. Functions must follow SPEC contracts, correctly handle 204 delete responses, and accept tripId filtering for list. Keep behavior explicit so screens can show retry/401/404 UI.",
+      "acceptance_criteria": [
+        "src/lib/api/places.ts exports listPlaces({page,pageSize,tripId?}) returning GetPlacesResponse and builds query params including tripId when provided",
+        "Exports getPlace(id) returning PlaceDetail, createPlace(req) returning PlaceDetail, updatePlace(id,req) returning PlaceDetail, deletePlace(id) resolving void on 204",
+        "All exported functions are fully typed with contracts from src/lib/types/contracts.ts and compile under strict TS"
+      ]
+    },
+    "covers": [
+      "F1-AC-1",
+      "F1-AC-2",
+      "F1-AC-9"
+    ],
+    "files": [
+      "src/lib/api/places.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes",
+      "No UI changes"
+    ],
+    "depends_on": [
+      "0002",
+      "0007"
+    ],
+    "db_schema": "",
+    "api_contract": "GET /api/places?page&pageSize&tripId? → {items,total,page} | 400/401\nGET /api/places/:id → PlaceDetail | 401/404\nPOST /api/places {CreatePlaceRequest} → 201 PlaceDetail | 400/401\nPATCH /api/places/:id {UpdatePlaceRequest} → 200 PlaceDetail | 400/401/404\nDELETE /api/places/:id → 204 | 401/404",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0009",
+    "title": "Trips API module (list/create/get/update/delete)",
+    "epic": "Epic 2 (API)",
+    "task": {
+      "description": "Implement Trips API wrappers with pagination and CRUD. Ensure date fields remain strings as specified and delete handles 204 correctly. These wrappers will be used by Trip List and Trip Detail screens for create/edit flows and refetching.",
+      "acceptance_criteria": [
+        "src/lib/api/trips.ts exports listTrips({page,pageSize}) returning GetTripsResponse and errors propagate for screens to handle",
+        "Exports createTrip(req) → Trip, getTrip(id) → Trip, updateTrip(id,req) → Trip, deleteTrip(id) → void (204)",
+        "All function params/responses are typed using src/lib/types/contracts.ts and src/lib/types/entities.ts with strict TS passing"
+      ]
+    },
+    "covers": [
+      "AC-TL-1",
+      "AC-TCE-1",
+      "AC-TD-1"
+    ],
+    "files": [
+      "src/lib/api/trips.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0002",
+      "0007"
+    ],
+    "db_schema": "",
+    "api_contract": "GET /api/trips?page&pageSize → {items,total,page} | 400/401\nPOST /api/trips {CreateTripRequest} → 201 Trip | 400/401\nGET /api/trips/:id → 200 Trip | 401/404\nPATCH /api/trips/:id {UpdateTripRequest} → 200 Trip | 400/401/404\nDELETE /api/trips/:id → 204 | 401/404",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0010",
+    "title": "Photos upload API (multipart) + EXIF/asset metadata extractor",
+    "epic": "Epic 2 (API)",
+    "task": {
+      "description": "Add multipart photo uploader for POST /api/photos and a small metadata extraction helper that normalizes takenAt/lat/lng from ImagePicker asset EXIF or asset location with explicit fallbacks. Enforce empty-string fields in FormData for missing metadata.",
+      "acceptance_criteria": [
+        "src/lib/api/photos.ts exports uploadPhoto(params) → Promise<CreatePhotoResponse> and sends FormData fields: file, fileSizeBytes, takenAt, latitude, longitude",
+        "When takenAt/latitude/longitude are missing, FormData appends takenAt/latitude/longitude as \"\" (empty string), not undefined",
+        "src/lib/photos/extractMetadata.ts exports extractPhotoMetadata(asset) returning ExtractedPhotoMetadata with source in {\"exif\",\"assetLocation\",\"none\"} and takenAt null when not available"
+      ]
+    },
+    "covers": [
+      "F2-AC-4",
+      "F2-AC-5",
+      "AC-PPK-4"
+    ],
+    "files": [
+      "src/lib/api/photos.ts",
+      "src/lib/photos/extractMetadata.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes",
+      "No screens changed"
+    ],
+    "depends_on": [
+      "0002",
+      "0007"
+    ],
+    "db_schema": "",
+    "api_contract": "POST /api/photos (multipart) file,fileSizeBytes,takenAt,latitude,longitude → 201 Photo | 400/401/413\nGET /api/photos/:id → 200 Photo | 401/404\nDELETE /api/photos/:id → 204 | 401/404",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0011",
+    "title": "Reverse geocode API module (429/500 surfaced to UI)",
+    "epic": "Epic 2 (API)",
+    "task": {
+      "description": "Implement reverse geocoding API wrapper used by Place Create pin correction flow. Keep errors un-swallowed so screens can show specific messaging for 429 quota errors and allow manual entry fallback when geocode fails.",
+      "acceptance_criteria": [
+        "src/lib/api/geocode.ts exports reverseGeocode(req: ReverseGeocodeRequest) → Promise<ReverseGeocodeResponse>",
+        "Request body sent contains numeric latitude/longitude and response is typed exactly as ReverseGeocodeResponse",
+        "TypeScript strict passes and errors propagate (no blanket try/catch returning null)"
+      ]
+    },
+    "covers": [
+      "F3-AC-2",
+      "F3-AC-3",
+      "AC-PC-5"
+    ],
+    "files": [
+      "src/lib/api/geocode.ts"
+    ],
+    "definition_of_done": [
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0002",
+      "0007"
+    ],
+    "db_schema": "",
+    "api_contract": "POST /api/geocode/reverse {latitude,longitude} → 200 {name,address} | 400/401/429/500",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0012",
+    "title": "Shared UI components: Banner + Skeleton + RemoteImage wrapper",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Add small reusable UI pieces used across list/detail/create screens: a Banner for network/server errors with retry CTA, a Skeleton block for loading placeholders, and a RemoteImage wrapper that shows a loading placeholder until the image is fully loaded.",
+      "acceptance_criteria": [
+        "src/components/ui/Banner.tsx renders message text and an optional Button labeled 'Retry' with minHeight>=44 (use NativeWind min-h-[48px])",
+        "src/components/ui/Skeleton.tsx renders a View with animate-pulse class and accepts className for sizing; no inline px dimensions",
+        "src/components/ui/RemoteImage.tsx uses the app Image component and renders a placeholder until onLoad fires; works on iOS and Android"
+      ]
+    },
+    "covers": [
+      "F4-AC-8",
+      "F2-AC-5",
+      "AC-PD-4"
+    ],
+    "files": [
+      "src/components/ui/Banner.tsx",
+      "src/components/ui/Skeleton.tsx",
+      "src/components/ui/RemoteImage.tsx"
+    ],
+    "definition_of_done": [
+      "Components compile and can be imported without runtime errors",
+      "NativeWind classes used for sizing and spacing"
+    ],
+    "depends_on": [
+      "0001"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": ""
+  },
+  {
+    "id": "0013",
+    "title": "Screen: Place List tab (search, pagination, swipe-to-delete, dev timing)",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Implement the Places List tab with initial skeletons, local search (no network), pull-to-refresh, infinite scroll pagination, 401 redirect to /login, and swipe-to-delete with confirm + API call. Include __DEV__ overlay showing 'Search compute' timing.",
+      "acceptance_criteria": [
+        "Uses FlatList with keyExtractor item.id, RefreshControl, ListEmptyComponent, contentContainerStyle flexGrow:1; no ScrollView wrapping FlatList",
+        "On mount, fetches page=1 pageSize=20; shows 6 Skeleton rows while loading, then renders items sorted by visitedAt desc",
+        "Typing in search filters locally and in __DEV__ shows a Text containing 'Search compute' and a non-negative ms value",
+        "Swipe-to-delete shows confirm Alert; on confirm calls deletePlace(id) then removes item from store; on 404 shows Banner message and still removes item locally",
+        "If API returns 401 for list fetch, screen redirects to /login via expo-router router.replace"
+      ]
+    },
+    "covers": [
+      "F4-AC-1",
+      "F4-AC-3",
+      "F4-AC-8",
+      "AC-PL-3"
+    ],
+    "files": [
+      "app/(tabs)/places.tsx"
+    ],
+    "definition_of_done": [
+      "Screen wrapped in SafeAreaView",
+      "All tappables min-h-[48px]",
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0003",
+      "0005",
+      "0007",
+      "0008",
+      "0006",
+      "0012"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [
+      "react-native-gesture-handler"
+    ],
+    "ui_requirements": "SafeAreaView p-4. Header title 'Places' (text-3xl font-bold) + search Input. FlatList cards with thumb (RemoteImage), name, visitedAt, rating. States: initial loading skeletons, empty icon+text+CTA 'Add place', error Banner+Retry. Swipe left reveals Delete action; confirm via Alert."
+  },
+  {
+    "id": "0014",
+    "title": "Screen: Place Map tab (pins + summary + refresh + 401 handling)",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Implement the Places Map tab that fetches places (pageSize=200) and renders pins on a map. Selecting a pin shows a bottom summary card with name/address and a CTA to open Place Detail. Includes pull-to-refresh equivalent and 401 redirect.",
+      "acceptance_criteria": [
+        "Renders SafeAreaView with MapView occupying available space; shows ActivityIndicator while loading first fetch",
+        "Fetches places with page=1 pageSize=200; on network error shows Banner with Retry; on 401 redirects to /login",
+        "Selecting a marker sets selectedPlaceId and shows a bottom Card with place name and a Button that navigates to /places/[id]",
+        "Refresh control is available via a top-right 'Refresh' button with min-h-[48px] that triggers refetch and shows loading state"
+      ]
+    },
+    "covers": [
+      "F5-AC-1",
+      "F5-AC-4",
+      "AC-PM-4"
+    ],
+    "files": [
+      "app/(tabs)/map.tsx"
+    ],
+    "definition_of_done": [
+      "Compiles on iOS and Android",
+      "No ScrollView wrapping the map",
+      "NativeWind spacing used"
+    ],
+    "depends_on": [
+      "0003",
+      "0005",
+      "0007",
+      "0008",
+      "0012"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [
+      "react-native-maps"
+    ],
+    "ui_requirements": "SafeAreaView. Title 'Map'. MapView with markers for each place lat/lng. Bottom summary Card (absolute) with name/address and 'Open' button. Error Banner overlays top. Provide Refresh button (lucide icon optional) in header row."
+  },
+  {
+    "id": "0015",
+    "title": "Screen: Photo Permission Help",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Add a simple help screen explaining how to grant photo library permissions on iOS/Android and providing a CTA back to Place Create. This screen is used when photo picking is blocked so users can recover without guessing system settings.",
+      "acceptance_criteria": [
+        "Route app/permissions/photos.tsx renders SafeAreaView with title 'Photo Access' and at least 3 bullet instructions (platform-agnostic text)",
+        "Includes a Button 'Back to create' that navigates to /places/new and has min-h-[48px]",
+        "Screen contains no API calls and compiles under strict TS"
+      ]
+    },
+    "covers": [
+      "AC-PP-4",
+      "F2-AC-1",
+      "F2-AC-2"
+    ],
+    "files": [
+      "app/permissions/photos.tsx"
+    ],
+    "definition_of_done": [
+      "SafeAreaView top-level",
+      "No platform-specific code without Platform.OS checks"
+    ],
+    "depends_on": [
+      "0012"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": "SafeAreaView p-4. Card with instructions. CTA button at bottom (min-h-[48px]). Optional secondary text explaining privacy: photos stay private to logged-in account."
+  },
+  {
+    "id": "0016",
+    "title": "Screen: Place Create (photo pick, 10MB validation, upload, geocode, dev timer)",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Implement Place Create form with defaults to minimize input (visitedAt=now, rating=5, tripId=null). Add photo picking, EXIF/asset metadata extraction, 10MB pre-upload validation, upload to /photos, and reverse geocode for a pin location with 429 handling. Show __DEV__ 'Create elapsed'.",
+      "acceptance_criteria": [
+        "Screen uses SafeAreaView + KeyboardAvoidingView; submit button remains reachable when keyboard is open (Platform.OS check)",
+        "Picking photos: any asset with fileSizeBytes>10,485,760 is marked failed and is NOT uploaded; failed item shows error text",
+        "Upload: Save button is disabled while any photo status is uploading; on 413 response shows Banner and leaves item status failed",
+        "Create Place: Save is disabled until at least 1 photo has status uploaded (serverPhotoId present); on success navigates to /places/[id]",
+        "Reverse geocode: 'Use pin address' calls reverseGeocode; on 429 shows Banner mentioning quota and leaves name/address inputs editable; in __DEV__ shows Text containing 'Create elapsed'"
+      ]
+    },
+    "covers": [
+      "F2-AC-4",
+      "F2-AC-5",
+      "F3-AC-3",
+      "AC-PC-5"
+    ],
+    "files": [
+      "app/places/new.tsx"
+    ],
+    "definition_of_done": [
+      "No ScrollView wrapping any FlatList; photo strip uses FlatList horizontal",
+      "All tappables min-h-[48px]",
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0006",
+      "0007",
+      "0008",
+      "0010",
+      "0011",
+      "0012"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [
+      "expo-image-picker"
+    ],
+    "ui_requirements": "SafeAreaView p-4. Form fields: name, category, rating, visitedAt, review, address, lat/lng (editable). Small MapView optional OR lat/lng inputs + 'Use pin address' button. Photo strip FlatList horizontal with RemoteImage thumbnails and per-item status (pending/uploading/uploaded/failed). Error Banner at top; ActivityIndicator while saving."
+  },
+  {
+    "id": "0017",
+    "title": "Screen: Place Detail (view + inline edit toggle + delete)",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Implement Place Detail screen fetching /api/places/:id and displaying photos, rating, visitedAt, address and review. Provide an 'Edit' toggle to patch editable fields and a 'Delete place' action. Handle 401 redirect and 404 not-found state with retry/back CTA.",
+      "acceptance_criteria": [
+        "On mount, fetches place detail by id; shows ActivityIndicator while loading; on 401 redirects to /login",
+        "If GET returns 404, renders an empty/error state with message and a Button 'Back to list' navigating to /(tabs)/places",
+        "Photos render via FlatList (horizontal) using RemoteImage with placeholders; no ScrollView wrapping FlatList",
+        "Edit toggle shows Input fields; tapping 'Save changes' calls updatePlace(id,{...}) and updates store detail; button disabled while saving",
+        "Delete place shows confirm Alert then calls deletePlace(id); on success navigates back to list and removes from store"
+      ]
+    },
+    "covers": [
+      "F1-AC-8",
+      "F1-AC-9",
+      "AC-PD-4"
+    ],
+    "files": [
+      "app/places/[id].tsx"
+    ],
+    "definition_of_done": [
+      "SafeAreaView top-level",
+      "Buttons min-h-[48px]",
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0003",
+      "0007",
+      "0008",
+      "0012"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": "SafeAreaView p-4. Title name. Horizontal photos FlatList with paging feel. Sections: meta (category, rating, visitedAt), address block, review block. Top actions: Edit/Cancel. Bottom destructive 'Delete place' button. Error Banner + retry."
+  },
+  {
+    "id": "0018",
+    "title": "Screen: Trip List tab (pagination + create/edit modal form)",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Implement Trips List tab with paginated fetch, pull-to-refresh, and empty/error states. Include an in-screen Modal containing the Trip create/edit form (name, start/end dates, description). After create/update, update store and close modal without full refetch.",
+      "acceptance_criteria": [
+        "Uses FlatList with keyExtractor item.id, RefreshControl, ListEmptyComponent, contentContainerStyle flexGrow:1; no ScrollView wrapping FlatList",
+        "Initial fetch calls listTrips page=1 pageSize=20; on network error shows Banner with Retry; on 401 redirects to /login",
+        "Tapping 'New trip' opens Modal with KeyboardAvoidingView; submitting calls createTrip and on success prepends/upserts in store then closes modal",
+        "Tapping an item navigates to /trips/[id]; tapping 'Edit' (on card) opens modal prefilled and calls updateTrip on submit"
+      ]
+    },
+    "covers": [
+      "AC-TL-1",
+      "AC-TL-3",
+      "AC-TCE-4"
+    ],
+    "files": [
+      "app/(tabs)/trips.tsx"
+    ],
+    "definition_of_done": [
+      "SafeAreaView top-level",
+      "Modal form reachable with keyboard open",
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0004",
+      "0007",
+      "0009",
+      "0012"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": "SafeAreaView p-4. Header title 'Trips' + 'New trip' button. Trip cards show name + date range + description snippet. Modal: form fields with Input, multiline description, primary submit button, secondary cancel. Error Banner at top of list."
+  },
+  {
+    "id": "0019",
+    "title": "Screen: Trip Detail (view + update coverPhotoUrl + delete)",
+    "epic": "Epic 3 (Screens)",
+    "task": {
+      "description": "Implement Trip Detail screen loading /api/trips/:id with view state and a simple inline edit for name/date/description and optional coverPhotoUrl. Add Delete Trip with confirm. Handle 404 with back CTA and 401 redirect to login.",
+      "acceptance_criteria": [
+        "On mount, calls getTrip(id); shows ActivityIndicator while loading; on 401 redirects to /login",
+        "If GET returns 404, shows message and a Button 'Back to trips' navigating to /(tabs)/trips",
+        "Inline edit mode toggles inputs; 'Save' calls updateTrip(id, req) and updates trips store byId/items entry",
+        "Delete shows confirm Alert and calls deleteTrip(id); on success navigates back and removes trip from store"
+      ]
+    },
+    "covers": [
+      "AC-TD-1",
+      "AC-TD-4",
+      "AC-TL-2"
+    ],
+    "files": [
+      "app/trips/[id].tsx"
+    ],
+    "definition_of_done": [
+      "SafeAreaView top-level",
+      "All buttons min-h-[48px]",
+      "TypeScript strict passes"
+    ],
+    "depends_on": [
+      "0004",
+      "0007",
+      "0009",
+      "0012"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": "SafeAreaView p-4. Title + date range. Optional coverPhotoUrl shown as text + Input to edit (MVP: no picker). Description block. Buttons: Edit/Cancel, Save, Delete (destructive). Error Banner for network issues with retry."
+  },
+  {
+    "id": "0020",
+    "title": "Final wiring + polish (routes, tab labels, cross-links)",
+    "epic": "Epic 4 (Integration)",
+    "task": {
+      "description": "Wire navigation affordances across the app: ensure tabs point to Places/Map/Trips, add CTA links (Place List → Create, Create success → Detail, Detail back → List), and ensure 401 redirects are consistent. Minor UI polish: consistent padding, titles, and empty states.",
+      "acceptance_criteria": [
+        "Tabs show routes for Places, Map, Trips and each screen loads via expo-router without runtime route errors",
+        "Place List empty CTA navigates to /places/new; successful create navigates to /places/[id]; Trip list items navigate to /trips/[id]",
+        "All screens use SafeAreaView and all primary buttons have min-h-[48px]; app builds and navigates end-to-end without crashes"
+      ]
+    },
+    "covers": [
+      "Epic4-Integration",
+      "AC-PL-1",
+      "AC-PM-1"
+    ],
+    "files": [
+      "app/(tabs)/_layout.tsx",
+      "app/(tabs)/index.tsx"
+    ],
+    "definition_of_done": [
+      "App compiles",
+      "Manual smoke test: open tabs, create place, view detail, create trip, view trip detail"
+    ],
+    "depends_on": [
+      "0013",
+      "0014",
+      "0016",
+      "0017",
+      "0018",
+      "0019"
+    ],
+    "db_schema": "",
+    "api_contract": "",
+    "dependencies": [],
+    "ui_requirements": "Ensure tab labels/icons consistent (lucide-react-native). Add links/buttons with clear CTAs. Keep spacing p-4 and titles text-3xl font-bold on each screen."
+  },
+  {
+    "id": "0021",
+    "title": "라우팅 와이어링 + Provider 연결 + 통합 폴리시",
+    "epic": "4",
+    "task": {
+      "description": "App.tsx에 모든 페이지() Route 연결, main.tsx 수정 금지(@AI:ANCHOR), 광고/결제 연동, 최종 UX 폴리시",
+      "acceptance_criteria": [
+        "App.tsx에 모든 페이지 Route가 정의되어 있다",
+        "모든 navigate() 대상에 Route가 존재한다",
+        "main.tsx의 TDSMobileAITProvider/BrowserRouter가 유지되어 있다",
+        "앱이 '/' 경로에서 정상 렌더링된다"
+      ]
+    },
+    "files": [
+      "src/App.tsx"
+    ],
+    "covers": [],
+    "definition_of_done": [
+      "typecheck pass",
+      "all routes accessible",
+      "no console errors"
+    ],
+    "depends_on": [
+      "0020"
+    ]
+  }
+]
